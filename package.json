@@ -4,7 +4,7 @@
   "description": "",
   "main": "",
   "scripts": {
-    "tasmota": "node tasmota/main.js"
+    "tasmota": "node src/tasmota/main.js"
   },
   "author": "",
   "license": "ISC",
