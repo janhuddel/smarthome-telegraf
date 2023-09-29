@@ -52,7 +52,7 @@ openWebSocket(config.ws.url, (message) => {
       }
     });
   } catch (err) {
-    console.error(`cannot parse payload: ${err.message}`);
+    console.error(`error processing message: ${err.message}`);
   }
 });
 
