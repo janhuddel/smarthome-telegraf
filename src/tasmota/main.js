@@ -5,12 +5,10 @@ import { config } from "./config.js";
 import { lineProtocol } from "../common/utils.js";
 
 async function main() {
-  console.error(`connecting to mqtt-broker '${config.mqtt.broker}'...`);
   const mqttClient = await connectAsync(
     `mqtt://${config.mqtt.broker}`,
     config.mqtt.connectOptions
   );
-  console.error(`connection to mqtt-broker ready`);
 
   await mqttClient.subscribeAsync(["tele/+/SENSOR"], { qos: config.mqtt.qos });
 
