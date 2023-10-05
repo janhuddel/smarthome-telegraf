@@ -1,5 +1,3 @@
-import axios from "axios";
-
 import { connectAsync } from "mqtt";
 import { config } from "./config.js";
 import { lineProtocol } from "../common/utils.js";
@@ -11,7 +9,6 @@ async function main() {
   );
 
   const topics = config.devices.map((d) => `hm2/status/${d.id}/+`);
-  console.log(topics);
 
   await mqttClient.subscribeAsync(topics, { qos: config.mqtt.qos });
 
@@ -19,12 +16,24 @@ async function main() {
     const topicParts = topic.split("/");
     const deviceId = topicParts[2];
     const device = config.devices.find((d) => d.id === deviceId);
+    const field = config.common.fieldOfInterest[topicParts[3]];
 
-    if (device) {
+    if (device && field) {
       const sensorData = JSON.parse(message);
+      const fields = {};
+      fields[field] = sensorData.val;
 
       console.log(
-        `sensor data for ${device.friendly} received: ${topicParts[3]} : ${sensorData.val}`
+        lineProtocol(
+          config.common.measurement,
+          {
+            vendor: config.common.vendor,
+            friendly: device.friendly,
+            device: sensorData.hm.device,
+          },
+          fields,
+          new Date(sensorData.ts)
+        )
       );
     }
   });

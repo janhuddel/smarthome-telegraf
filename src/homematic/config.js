@@ -9,6 +9,13 @@ export const config = {
   },
   common: {
     vendor: "homematic",
+    measurement: "electricity",
+    fieldOfInterest: {
+      POWER: "power",
+      CURRENT: "current",
+      VOLTAGE: "voltage",
+      ENERGY_COUNTER: "sum_power_total",
+    },
   },
   devices: [
     {
