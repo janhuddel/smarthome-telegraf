@@ -1,0 +1,59 @@
+version: "3"
+
+services:
+  influxdb:
+    container_name: ha.influxdb
+    image: influxdb:2.7
+    ports:
+      - "8086:8086"
+    volumes:
+      - influxdb.data:/var/lib/influxdb2
+
+  mqtt:
+    container_name: ha.mqtt
+    image: eclipse-mosquitto:2
+    ports:
+      - "1883:1883"
+    volumes:
+      - ./config/mqtt/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - mqtt.data:/mosquitto/data/
+      - mqtt.log:/mosquitto/log/
+
+  node-red:
+    container_name: ha.node-red
+    image: nodered/node-red
+    ports:
+      - "1880:1880"
+    volumes:
+      - node-red.data:/data
+    depends_on:
+      - mqtt
+      - influxdb
+
+  etcd:
+    container_name: ha.etcd
+    image: "bitnami/etcd:latest"
+    ports:
+      - "2379:2379"
+    volumes:
+      - etcd.data:/bitnami/etcd/data
+    environment:
+      - ALLOW_NONE_AUTHENTICATION=yes
+      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd:2379
+
+  redis:
+    container_name: ha.redis
+    image: redis/redis-stack:latest
+    ports:
+      - "10001:6379"
+      - "13333:8001"
+    volumes:
+      - redis.data:/data
+
+volumes:
+  node-red.data:
+  mqtt.data:
+  mqtt.log:
+  influxdb.data:
+  etcd.data:
+  redis.data:
