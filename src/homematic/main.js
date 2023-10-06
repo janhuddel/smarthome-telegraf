@@ -16,7 +16,7 @@ async function main() {
     const topicParts = topic.split("/");
     const deviceId = topicParts[2];
     const device = config.devices.find((d) => d.id === deviceId);
-    const field = config.common.fieldOfInterest[topicParts[3]];
+    const field = config.common.fieldsOfInterest[topicParts[3]];
 
     if (device && field) {
       const sensorData = JSON.parse(message);

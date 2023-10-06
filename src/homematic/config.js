@@ -10,7 +10,7 @@ export const config = {
   common: {
     vendor: "homematic",
     measurement: "electricity",
-    fieldOfInterest: {
+    fieldsOfInterest: {
       POWER: "power",
       CURRENT: "current",
       VOLTAGE: "voltage",
