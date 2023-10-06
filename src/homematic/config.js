@@ -21,6 +21,7 @@ export const config = {
       VOLTAGE: "voltage",
       ENERGY_COUNTER: "sum_power_total",
     },
+    useOffsets: true,
   },
   devices: [
     {

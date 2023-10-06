@@ -15,9 +15,11 @@ async function main() {
     config.mqtt.connectOptions
   );
 
-  const topics = config.devices.map((d) => `hm/status/${d.id}/+`);
+  const topics = config.devices.map((d) => `hm2/status/${d.id}/+`);
 
-  await mqttClient.subscribeAsync(topics, { qos: config.mqtt.qos });
+  await mqttClient.subscribeAsync(topics, {
+    qos: config.mqtt.qos,
+  });
 
   mqttClient.on("message", async (topic, message) => {
     const topicParts = topic.split("/");
@@ -30,7 +32,7 @@ async function main() {
       const fields = {};
       let value = sensorData.val;
 
-      if (field === "sum_power_total") {
+      if (config.common.useOffsets && field === "sum_power_total") {
         // the plug of Homematic IP starts again from 0 after a voltage loss
         let { offset, lastValue } = await getOffsetAndLastValue(deviceId);
         const value_raw = value;
