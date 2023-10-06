@@ -1,8 +1,15 @@
 import { connectAsync } from "mqtt";
+import { Etcd3 } from "etcd3";
 import { config } from "./config.js";
-import { lineProtocol } from "../common/utils.js";
+import {
+  lineProtocol,
+  buildOffsetKey,
+  buildLastValueKey,
+} from "../common/utils.js";
 
 async function main() {
+  const etcdClient = new Etcd3({ hosts: config.etcd.host });
+
   const mqttClient = await connectAsync(
     `mqtt://${config.mqtt.broker}`,
     config.mqtt.connectOptions
@@ -37,6 +44,20 @@ async function main() {
       );
     }
   });
+
+  async function getOffsetAndLastValue(deviceId) {
+    const offsetKey = buildOffsetKey(device.id);
+    let offset = await etcdClient.get(offsetKey);
+    if (offset === null) {
+      await etcdClient.put(buildOffsetKey(deviceId)).value(0);
+      await etcdClient.put(buildLastValueKey(deviceId)).value(0);
+
+      offset = 0;
+      lastValue = 0;
+    } else {
+    }
+    return { offset, lastValue };
+  }
 }
 
 main();

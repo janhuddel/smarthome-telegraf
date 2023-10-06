@@ -7,6 +7,9 @@ export const config = {
     },
     qos: 0,
   },
+  etcd: {
+    host: "172.20.10.6:2379",
+  },
   common: {
     vendor: "homematic",
     measurement: "electricity",

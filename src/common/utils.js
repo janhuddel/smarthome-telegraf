@@ -1,3 +1,9 @@
+import { hostname } from "os";
+
+export const buildOffsetKey = (deviceId) => `${hostname()}/${deviceId}/offset`;
+
+export const buildLastValueKey = (deviceId) => `${hostname()}/${deviceId}/last`;
+
 export function lineProtocol(measurement, tags, fields, timestamp) {
   let line = `${measurement}`;
 
