@@ -1,9 +1,3 @@
-import { hostname } from "os";
-
-export const buildOffsetKey = (device) => `/telegraf/${device}/offset`;
-
-export const buildLastValueKey = (device) => `/telegraf/${device}/last`;
-
 export function lineProtocol(measurement, tags, fields, timestamp) {
   let line = `${measurement}`;
 

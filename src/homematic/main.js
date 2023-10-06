@@ -1,16 +1,10 @@
 import { connectAsync } from "mqtt";
-import { Etcd3 } from "etcd3";
 import { config } from "./config.js";
-import {
-  lineProtocol,
-  buildOffsetKey,
-  buildLastValueKey,
-} from "../common/utils.js";
+import { JsonDB, Config } from "node-json-db";
+import { lineProtocol } from "../common/utils.js";
 
 async function main() {
-  const etcdClient = new Etcd3({
-    hosts: config.etcd.host,
-  });
+  const jsonDb = new JsonDB(new Config(config.common.dbFile, true, true, "/"));
 
   const mqttClient = await connectAsync(
     `mqtt://${config.mqtt.broker}`,
@@ -45,13 +39,13 @@ async function main() {
             offset += lastValue;
 
             // save new offset
-            await etcdClient.put(buildOffsetKey(deviceId)).value(offset);
+            await updateOffset(deviceId, offset);
           }
 
           value += offset;
 
           // save last value
-          await etcdClient.put(buildLastValueKey(deviceId)).value(value_raw);
+          await updateLastValue(deviceId, value_raw);
 
           fields["sum_power_total_raw"] = value_raw;
           fields["offset"] = offset;
@@ -77,22 +71,31 @@ async function main() {
   });
 
   async function getOffsetAndLastValue(deviceId) {
-    const offsetKey = buildOffsetKey(deviceId);
-    const lastValueKey = buildLastValueKey(deviceId);
+    const offsetKey = `/${deviceId}/offset`;
+    const lastValueKey = `/${deviceId}/last`;
 
-    let offset = await etcdClient.get(offsetKey);
+    let offset = await jsonDb.getObjectDefault(offsetKey, null);
     let lastValue = 0;
     if (offset === null) {
       // first run
-      await etcdClient.put(offsetKey).value(0);
-      await etcdClient.put(lastValueKey).value(0);
+      await updateOffset(deviceId, 0);
+      await updateLastValue(deviceId, 0);
 
       offset = 0;
       lastValue = 0;
     } else {
-      lastValue = await etcdClient.get(lastValueKey);
+      lastValue = await jsonDb.getData(lastValueKey);
     }
     return { offset: Number(offset), lastValue: Number(lastValue) };
+  }
+
+  async function updateOffset(deviceId, offset) {
+    await jsonDb.push(`/${deviceId}/offset`, offset);
+    await jsonDb.push(`/${deviceId}/offset_updated`, new Date());
+  }
+
+  async function updateLastValue(deviceId, lastValue) {
+    await jsonDb.push(`/${deviceId}/last`, lastValue);
   }
 }
 
