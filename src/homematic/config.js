@@ -27,5 +27,13 @@ export const config = {
       id: "0001D569A57FCA:6",
       friendly: "Server",
     },
+    {
+      id: "0001DA49A34B53:6",
+      friendly: "Gefrierschrank",
+    },
+    {
+      id: "LEQ0533123:2",
+      friendly: "Waschmaschine",
+    },
   ],
 };
