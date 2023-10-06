@@ -15,7 +15,7 @@ async function main() {
     config.mqtt.connectOptions
   );
 
-  const topics = config.devices.map((d) => `hm2/status/${d.id}/+`);
+  const topics = config.devices.map((d) => `hm3/status/${d.id}/+`);
 
   await mqttClient.subscribeAsync(topics, { qos: config.mqtt.qos });
 
@@ -28,8 +28,31 @@ async function main() {
     if (device && field) {
       const sensorData = JSON.parse(message);
       const fields = {};
-      fields[field] = sensorData.val;
+      let value = sensorData.val;
 
+      if (field === "sum_power_total") {
+        // the plug of Homematic IP starts again from 0 after a voltage loss
+        let { offset, lastValue } = await getOffsetAndLastValue(deviceId);
+        const value_raw = value;
+
+        if (value < lastValue) {
+          // reset -> lastValue + old offset = new offset
+          offset += lastValue;
+
+          // save new offset
+          await etcdClient.put(buildOffsetKey(deviceId)).value(offset);
+        }
+
+        value += offset;
+
+        // save last value
+        await etcdClient.put(buildLastValueKey(deviceId)).value(value_raw);
+
+        fields["sum_power_total_raw"] = value_raw;
+        fields["offset"] = offset;
+      }
+
+      fields[field] = value;
       console.log(
         lineProtocol(
           config.common.measurement,
@@ -46,17 +69,22 @@ async function main() {
   });
 
   async function getOffsetAndLastValue(deviceId) {
-    const offsetKey = buildOffsetKey(device.id);
+    const offsetKey = buildOffsetKey(deviceId);
+    const lastValueKey = buildLastValueKey(deviceId);
+
     let offset = await etcdClient.get(offsetKey);
+    let lastValue = 0;
     if (offset === null) {
-      await etcdClient.put(buildOffsetKey(deviceId)).value(0);
-      await etcdClient.put(buildLastValueKey(deviceId)).value(0);
+      // first run
+      await etcdClient.put(offsetKey).value(0);
+      await etcdClient.put(lastValueKey).value(0);
 
       offset = 0;
       lastValue = 0;
     } else {
+      lastValue = await etcdClient.get(lastValueKey);
     }
-    return { offset, lastValue };
+    return { offset: Number(offset), lastValue: Number(lastValue) };
   }
 }
 

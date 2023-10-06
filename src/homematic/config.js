@@ -1,3 +1,5 @@
+import { hostname } from "os";
+
 export const config = {
   mqtt: {
     broker: "172.20.10.4",
