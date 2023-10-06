@@ -8,7 +8,9 @@ import {
 } from "../common/utils.js";
 
 async function main() {
-  const etcdClient = new Etcd3({ hosts: config.etcd.host });
+  const etcdClient = new Etcd3({
+    hosts: config.etcd.host,
+  });
 
   const mqttClient = await connectAsync(
     `mqtt://${config.mqtt.broker}`,
@@ -16,57 +18,61 @@ async function main() {
   );
 
   const topics = config.devices.map((d) => `hm2/status/${d.id}/+`);
-
+  console.log(topics);
   await mqttClient.subscribeAsync(topics, {
     qos: config.mqtt.qos,
   });
 
   mqttClient.on("message", async (topic, message) => {
-    const topicParts = topic.split("/");
-    const deviceId = topicParts[2];
-    const device = config.devices.find((d) => d.id === deviceId);
-    const field = config.common.fieldsOfInterest[topicParts[3]];
+    try {
+      const topicParts = topic.split("/");
+      const deviceId = topicParts[2];
+      const device = config.devices.find((d) => d.id === deviceId);
+      const field = config.common.fieldsOfInterest[topicParts[3]];
 
-    if (device && field) {
-      const sensorData = JSON.parse(message);
-      const fields = {};
-      let value = sensorData.val;
+      if (device && field) {
+        const sensorData = JSON.parse(message);
+        const fields = {};
+        let value = sensorData.val;
 
-      if (config.common.useOffsets && field === "sum_power_total") {
-        // the plug of Homematic IP starts again from 0 after a voltage loss
-        let { offset, lastValue } = await getOffsetAndLastValue(deviceId);
-        const value_raw = value;
+        if (config.common.useOffsets && field === "sum_power_total") {
+          // the plug of Homematic IP starts again from 0 after a voltage loss
+          let { offset, lastValue } = await getOffsetAndLastValue(deviceId);
+          const value_raw = value;
 
-        if (value < lastValue) {
-          // reset -> lastValue + old offset = new offset
-          offset += lastValue;
+          if (value < lastValue) {
+            // reset -> lastValue + old offset = new offset
+            offset += lastValue;
 
-          // save new offset
-          await etcdClient.put(buildOffsetKey(deviceId)).value(offset);
+            // save new offset
+            await etcdClient.put(buildOffsetKey(deviceId)).value(offset);
+          }
+
+          value += offset;
+
+          // save last value
+          await etcdClient.put(buildLastValueKey(deviceId)).value(value_raw);
+
+          fields["sum_power_total_raw"] = value_raw;
+          fields["offset"] = offset;
         }
 
-        value += offset;
-
-        // save last value
-        await etcdClient.put(buildLastValueKey(deviceId)).value(value_raw);
-
-        fields["sum_power_total_raw"] = value_raw;
-        fields["offset"] = offset;
+        fields[field] = value;
+        console.log(
+          lineProtocol(
+            config.common.measurement,
+            {
+              vendor: config.common.vendor,
+              friendly: device.friendly,
+              device: sensorData.hm.device,
+            },
+            fields,
+            new Date(sensorData.ts)
+          )
+        );
       }
-
-      fields[field] = value;
-      console.log(
-        lineProtocol(
-          config.common.measurement,
-          {
-            vendor: config.common.vendor,
-            friendly: device.friendly,
-            device: sensorData.hm.device,
-          },
-          fields,
-          new Date(sensorData.ts)
-        )
-      );
+    } catch (err) {
+      console.error(err.message);
     }
   });
 
