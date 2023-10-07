@@ -12,7 +12,7 @@ async function main() {
   );
 
   const topics = config.devices.map((d) => `hm2/status/${d.id}/+`);
-  console.log(topics);
+
   await mqttClient.subscribeAsync(topics, {
     qos: config.mqtt.qos,
   });
