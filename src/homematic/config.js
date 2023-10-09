@@ -1,6 +1,7 @@
 export const config = {
   mqtt: {
     broker: "mqtt.intra.rohwer.sh",
+    topicPrefix: "hm2/status",
     connectOptions: {
       clientId: `homematic-telegraf-${new Date().getTime()}`,
       connectTimeout: 10 * 1000,
