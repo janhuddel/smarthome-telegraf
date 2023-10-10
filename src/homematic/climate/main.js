@@ -12,8 +12,6 @@ async function main() {
     (d) => `${config.mqtt.topicPrefix}/${d.id}/+`
   );
 
-  console.log(topics);
-
   await mqttClient.subscribeAsync(topics, {
     qos: config.mqtt.qos,
   });
