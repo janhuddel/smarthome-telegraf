@@ -19,7 +19,7 @@ openWebSocket(config.ws.url, (message) => {
           {
             power: inverter.AC["0"].Power.v,
             voltage: inverter.AC["0"].Voltage.v,
-            current: inverter.AC["0"].Current.v,
+            current: getCurrentInmA(inverter.AC["0"].Current),
             sum_power_total: getPowerInWh(inverter.AC["0"].YieldTotal),
             sum_power_today: getPowerInWh(inverter.AC["0"].YieldDay),
           },
@@ -42,7 +42,7 @@ openWebSocket(config.ws.url, (message) => {
             {
               power: dc.Power.v,
               voltage: dc.Voltage.v,
-              current: dc.Current.v,
+              current: getCurrentInmA(dc.Current),
               sum_power_total: getPowerInWh(dc.YieldTotal),
               sum_power_today: getPowerInWh(dc.YieldDay),
             },
@@ -58,6 +58,14 @@ openWebSocket(config.ws.url, (message) => {
 
 function getPowerInWh(obj) {
   if (obj.u === "kWh") {
+    return obj.v * 1000.0;
+  } else {
+    return obj.v;
+  }
+}
+
+function getCurrentInmA(obj) {
+  if (obj.u === "A") {
     return obj.v * 1000.0;
   } else {
     return obj.v;
