@@ -1,9 +1,9 @@
 import { connectAsync } from "mqtt";
-import { config } from "./config.js";
 import { JsonDB, Config } from "node-json-db";
-import { lineProtocol } from "../../common/utils.js";
+import { loadConfig, lineProtocol } from "../../common/utils.js";
 
 async function main() {
+  const config = await loadConfig("homematic-electricity");
   const jsonDb = new JsonDB(new Config(config.common.dbFile, true, true, "/"));
 
   const mqttClient = await connectAsync(

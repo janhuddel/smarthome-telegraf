@@ -2,6 +2,14 @@ function round(num) {
   return Math.round(num * 100) / 100;
 }
 
+export async function loadConfig(name) {
+  const configDir = process.argv[2] || "../../config";
+  const configFile = `${configDir}/${name}.js`;
+
+  const configModule = await import(configFile);
+  return configModule.config;
+}
+
 export function lineProtocol(measurement, tags, fields, timestamp) {
   let line = `${measurement}`;
 

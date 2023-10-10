@@ -1,6 +1,5 @@
 export const config = {
   mqtt: {
-    //broker: "mqtt.intra.rohwer.sh",
     broker: "172.20.10.4",
     connectOptions: {
       clientId: `tasmota-telegraf-${new Date().getTime()}`,

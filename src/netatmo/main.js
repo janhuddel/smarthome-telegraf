@@ -1,9 +1,9 @@
 import { CronJob } from "cron";
-import { config } from "./config.js";
 import { netatmoApiClient } from "./netatmo-api.js";
-import { lineProtocol } from "../common/utils.js";
+import { loadConfig, lineProtocol } from "../common/utils.js";
 
 async function main() {
+  const config = await loadConfig("netatmo");
   const client = netatmoApiClient(config);
 
   // start cronjob

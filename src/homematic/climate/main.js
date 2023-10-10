@@ -1,8 +1,9 @@
 import { connectAsync } from "mqtt";
-import { config } from "./config.js";
-import { lineProtocol } from "../../common/utils.js";
+import { loadConfig, lineProtocol } from "../../common/utils.js";
 
 async function main() {
+  const config = await loadConfig("homematic-climate");
+
   const mqttClient = await connectAsync(
     `mqtt://${config.mqtt.broker}`,
     config.mqtt.connectOptions
