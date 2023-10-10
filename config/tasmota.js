@@ -1,6 +1,6 @@
 export const config = {
   mqtt: {
-    broker: "172.20.10.4",
+    broker: "172.16.1.12",
     connectOptions: {
       clientId: `tasmota-telegraf-${new Date().getTime()}`,
       connectTimeout: 10 * 1000,
