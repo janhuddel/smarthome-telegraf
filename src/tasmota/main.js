@@ -45,7 +45,7 @@ async function processSensorData(device, sensorData) {
         {
           power,
           voltage: sensorData.ENERGY.Voltage,
-          current: sensorData.ENERGY.Current,
+          current: sensorData.ENERGY.Current * 1000.0,
           sum_power_today: sensorData.ENERGY.Today * 1000.0,
           sum_power_total: sensorData.ENERGY.Total * 1000.0,
         },
@@ -69,7 +69,7 @@ async function processSensorData(device, sensorData) {
           {
             power: power[i],
             voltage: sensorData.ENERGY.Voltage,
-            current: sensorData.ENERGY.Current[i],
+            current: sensorData.ENERGY.Current[i] * 1000.0,
             sum_power_today: energyTotals.Today[i] * 1000.0,
             sum_power_total: energyTotals.Total[i] * 1000.0,
           },
