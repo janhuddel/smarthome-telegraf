@@ -30,30 +30,8 @@ services:
       - mqtt
       - influxdb
 
-  etcd:
-    container_name: ha.etcd
-    image: "bitnami/etcd:latest"
-    ports:
-      - "2379:2379"
-    volumes:
-      - etcd.data:/bitnami/etcd/data
-    environment:
-      - ALLOW_NONE_AUTHENTICATION=yes
-      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd:2379
-
-  redis:
-    container_name: ha.redis
-    image: redis/redis-stack:latest
-    ports:
-      - "10001:6379"
-      - "13333:8001"
-    volumes:
-      - redis.data:/data
-
 volumes:
   node-red.data:
   mqtt.data:
   mqtt.log:
   influxdb.data:
-  etcd.data:
-  redis.data:

@@ -1,9 +1,9 @@
 export const config = {
   mqtt: {
-    broker: "mqtt.intra.rohwer.sh",
-    topicPrefix: "hm2/status",
+    broker: "172.16.1.12",
+    topicPrefix: "hm/status",
     connectOptions: {
-      clientId: `homematic-telegraf-${new Date().getTime()}`,
+      clientId: `homematic-electricity-telegraf-${new Date().getTime()}`,
       connectTimeout: 10 * 1000,
     },
     qos: 0,
@@ -17,7 +17,7 @@ export const config = {
       VOLTAGE: "voltage",
       ENERGY_COUNTER: "sum_power_total",
     },
-    dbFile: "/var/lib/telegraf-homematic.json",
+    dbFile: "telegraf-homematic.json",
     useOffsets: true,
   },
   devices: [

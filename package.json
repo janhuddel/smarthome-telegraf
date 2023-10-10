@@ -7,7 +7,8 @@
     "tasmota": "node src/tasmota/main.js",
     "opendtu": "node src/opendtu/main.js",
     "netatmo": "node src/netatmo/main.js",
-    "homematic": "node src/homematic/main.js"
+    "homematic-electricity": "node src/homematic/electricity/main.js",
+    "homematic-climate": "node src/homematic/climate/main.js"
   },
   "author": "",
   "license": "ISC",

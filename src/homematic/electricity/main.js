@@ -1,7 +1,7 @@
 import { connectAsync } from "mqtt";
 import { config } from "./config.js";
 import { JsonDB, Config } from "node-json-db";
-import { lineProtocol } from "../common/utils.js";
+import { lineProtocol } from "../../common/utils.js";
 
 async function main() {
   const jsonDb = new JsonDB(new Config(config.common.dbFile, true, true, "/"));
