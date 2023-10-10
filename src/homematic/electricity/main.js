@@ -61,6 +61,7 @@ async function main() {
               vendor: config.common.vendor,
               friendly: device.friendly,
               device: sensorData.hm.device,
+              type: sensorData.hm.iface,
             },
             fields,
             new Date(sensorData.ts)
