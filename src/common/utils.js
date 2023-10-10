@@ -1,11 +1,12 @@
+const ENV = process.env["ENV"] || "dev";
+
 function round(num) {
   return Math.round(num * 100) / 100;
 }
 
 export async function loadConfig(name) {
-  const configDir = process.argv[2] || "../../config";
-  const configFile = `${configDir}/${name}.js`;
-
+  const configFile = `../../config/${ENV}/${name}.js`;
+  //console.error(`loading configuration ${configFile}...`);
   const configModule = await import(configFile);
   return configModule.config;
 }

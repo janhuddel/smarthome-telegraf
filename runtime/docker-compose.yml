@@ -1,0 +1,38 @@
+version: "3"
+
+services:
+  mqtt:
+    container_name: mqtt
+    image: eclipse-mosquitto:2
+    restart: unless-stopped
+    ports:
+      - 1883:1883
+    volumes:
+      - ./mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - mqtt.data:/mosquitto/data/
+      - mqtt.log:/mosquitto/log/
+
+  telegraf:
+    container_name: telegraf
+    build: ..
+    image: smarthome-telegraf:latest
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Berlin
+      - NETATMO_API_CLIENT_ID=${NETATMO_API_CLIENT_ID}
+      - NETATMO_API_CLIENT_SECRET=${NETATMO_API_CLIENT_SECRET}
+      - INFLUXDB_URL=${INFLUXDB_URL}
+      - INFLUXDB_TOKEN=${INFLUXDB_TOKEN}
+      - INFLUXDB_ORG=home
+      - INFLUXDB_BUCKET=smarthome
+      - ENV=prod
+    depends_on:
+      - mqtt
+    volumes:
+      - ./telegraf.conf:/etc/telegraf.conf:ro
+      - ../data/jsondb:/var/lib/jsondb
+      - ../config:/opt/smarthome-telegraf/config:ro
+
+volumes:
+  mqtt.data:
+  mqtt.log:
