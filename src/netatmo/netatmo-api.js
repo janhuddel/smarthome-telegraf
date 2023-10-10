@@ -1,11 +1,12 @@
 import axios from "axios";
 import qs from "qs";
+import { JsonDB, Config } from "node-json-db";
 
-export const netatmoApiClient = function (options) {
-  const client_id = options.clientId;
-  const client_secret = options.clientSecret;
-  let access_token = options.accessToken;
-  let refresh_token = options.refreshToken;
+export const netatmoApiClient = function (config) {
+  const jsonDb = new JsonDB(new Config(config.common.dbFile, true, true, "/"));
+
+  const client_id = config.netatmo.clientId;
+  const client_secret = config.netatmo.clientSecret;
 
   const axiosInstance = axios.create({
     baseURL: "https://api.netatmo.com",
@@ -13,9 +14,10 @@ export const netatmoApiClient = function (options) {
 
   // provide bearer token as header
   axiosInstance.interceptors.request.use(
-    (config) => {
-      config.headers["Authorization"] = `Bearer ${access_token}`;
-      return config;
+    async (reqConfig) => {
+      const access_token = await readAccessToken();
+      reqConfig.headers["Authorization"] = `Bearer ${access_token}`;
+      return reqConfig;
     },
     (error) => Promise.reject(error)
   );
@@ -37,6 +39,8 @@ export const netatmoApiClient = function (options) {
   );
 
   const refreshToken = async () => {
+    const refresh_token = await readRefreshToken();
+
     const data = qs.stringify({
       grant_type: "refresh_token",
       refresh_token,
@@ -54,8 +58,23 @@ export const netatmoApiClient = function (options) {
       data: data,
     });
 
-    access_token = response.data.access_token;
-    refresh_token = response.data.refresh_token;
+    await updateTokens(response.data);
+  };
+
+  const readAccessToken = async () => {
+    return await jsonDb.getObjectDefault("/netatmo/api/access-token");
+  };
+
+  const readRefreshToken = async () => {
+    return await jsonDb.getObjectDefault("/netatmo/api/refresh-token");
+  };
+
+  const updateTokens = async (tokenResponse) => {
+    await jsonDb.push("/netatmo/api/access-token", tokenResponse.access_token);
+    await jsonDb.push(
+      "/netatmo/api/refresh-token",
+      tokenResponse.refresh_token
+    );
   };
 
   return {

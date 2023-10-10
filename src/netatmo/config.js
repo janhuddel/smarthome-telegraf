@@ -2,11 +2,18 @@ export const config = {
   netatmo: {
     clientId: "650ca860f45a17698803a2b0",
     clientSecret: "xhicDBB6ElueNB2HLikQfqkpFpqnhxu",
-    accessToken: "518dfbfc1877593eba000181|80173b6692c75e464b0a42ac6b9f4595",
-    refreshToken: "518dfbfc1877593eba000181|3a8602574f36acf31e955302c8bdb281",
+    // create token here: https://dev.netatmo.com/apps/
   },
   common: {
     vendor: "netatmo",
     measurement: "climate",
+    cron: "0 */1 * * * *",
+    dbFile: "data/jsondb/telegraf-netatmo.json",
   },
+  devices: [
+    { id: "70:ee:50:00:ba:fc", friendly: "Wohnzimmmer" },
+    { id: "02:00:00:00:bf:d8", friendly: "Garten" },
+    { id: "03:00:00:03:7d:76", friendly: "Büro" },
+    { id: "03:00:00:00:bf:24", friendly: "HW-Raum" },
+  ],
 };

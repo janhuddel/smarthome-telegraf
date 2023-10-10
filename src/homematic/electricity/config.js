@@ -17,7 +17,7 @@ export const config = {
       VOLTAGE: "voltage",
       ENERGY_COUNTER: "sum_power_total",
     },
-    dbFile: "telegraf-homematic.json",
+    dbFile: "data/jsondb/telegraf-homematic.json",
     useOffsets: true,
   },
   devices: [
