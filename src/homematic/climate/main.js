@@ -36,10 +36,6 @@ async function main() {
           return;
         }
 
-        if (field === "valve_level") {
-          value = Math.round(value * 100) / 100;
-        }
-
         const fields = {};
         fields[field] = value;
 

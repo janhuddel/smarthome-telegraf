@@ -1,3 +1,7 @@
+function round(num) {
+  return Math.round(num * 100) / 100;
+}
+
 export function lineProtocol(measurement, tags, fields, timestamp) {
   let line = `${measurement}`;
 
@@ -18,7 +22,7 @@ export function lineProtocol(measurement, tags, fields, timestamp) {
         if (typeof value === "string" || value instanceof String) {
           return `${key}="${value}"`;
         } else {
-          return `${key}=${value}`;
+          return `${key}=${round(value)}`;
         }
       })
       .join(",");
