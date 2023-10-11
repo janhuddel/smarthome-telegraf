@@ -11,7 +11,7 @@ export const config = {
     dbFile: "/var/lib/jsondb/telegraf-netatmo.json",
   },
   devices: [
-    { id: "70:ee:50:00:ba:fc", friendly: "Wohnzimmmer" },
+    { id: "70:ee:50:00:ba:fc", friendly: "Wohnzimmer" },
     { id: "02:00:00:00:bf:d8", friendly: "Garten" },
     { id: "03:00:00:03:7d:76", friendly: "Büro" },
     { id: "03:00:00:00:bf:24", friendly: "HW-Raum" },
