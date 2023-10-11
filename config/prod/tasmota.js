@@ -40,7 +40,7 @@ export const config = {
     {
       id: "tasmota_1CFCDC",
       ip: "172.19.20.2",
-      channels: ["Balkonkraftwerk"],
+      channels: ["Wechselrichter"],
     },
   ],
 };
