@@ -7,7 +7,7 @@ export const config = {
   common: {
     vendor: "netatmo",
     measurement: "climate",
-    cron: "0 */10 * * * *",
+    cron: "0 */5 * * * *",
     dbFile: "/var/lib/jsondb/telegraf-netatmo.json",
   },
   devices: [
