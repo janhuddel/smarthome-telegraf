@@ -24,7 +24,7 @@ services:
       - INFLUXDB_URL=${INFLUXDB_URL}
       - INFLUXDB_TOKEN=${INFLUXDB_TOKEN}
       - INFLUXDB_ORG=home
-      - INFLUXDB_BUCKET=smarthome2
+      - INFLUXDB_BUCKET=smarthome
       - ENV=prod
     depends_on:
       - mqtt
