@@ -20,7 +20,7 @@ async function main() {
   async function collectMetrics() {
     try {
       const data = await client.getStationsData();
-
+      
       const mainDevice = data.body.devices[0];
       processModule(mainDevice);
       mainDevice.modules.forEach(processModule);
@@ -31,7 +31,7 @@ async function main() {
 
   async function processModule(module) {
     const device = config.devices.find((d) => d.id === module._id);
-    if (device) {
+    if (device && module.dashboard_data) {
       const timestamp = module.dashboard_data.time_utc * 1000000000;
 
       const fields = {};
