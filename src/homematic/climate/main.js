@@ -1,8 +1,10 @@
 import { connectAsync } from "mqtt";
-import { loadConfig, lineProtocol } from "../../common/utils.js";
+import { loadConfig, lineProtocol, logError } from "../../common/utils.js";
+
+const SCRIPTNAME = "homematic-climate";
 
 async function main() {
-  const config = await loadConfig("homematic-climate");
+  const config = await loadConfig(SCRIPTNAME);
 
   const mqttClient = await connectAsync(
     `mqtt://${config.mqtt.broker}`,
@@ -53,7 +55,7 @@ async function main() {
         );
       }
     } catch (err) {
-      console.error(err.message);
+      logError(SCRIPTNAME, err);
     }
   });
 }

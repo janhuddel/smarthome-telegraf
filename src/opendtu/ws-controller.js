@@ -45,7 +45,7 @@ export const openWebSocket = (url, messageHandler) => {
     });
 
     wsClient.on("error", (err) => {
-      console.error(`Websocket error: ${err}`);
+      console.error(`Websocket ${err.name}: ${err.message}`);
     });
 
     wsClient.on("message", messageHandler);

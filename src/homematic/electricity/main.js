@@ -1,9 +1,11 @@
 import { connectAsync } from "mqtt";
 import { JsonDB, Config } from "node-json-db";
-import { loadConfig, lineProtocol } from "../../common/utils.js";
+import { loadConfig, lineProtocol, logError } from "../../common/utils.js";
+
+const SCRIPTNAME = "homematic-electricity";
 
 async function main() {
-  const config = await loadConfig("homematic-electricity");
+  const config = await loadConfig(SCRIPTNAME);
   const jsonDb = new JsonDB(new Config(config.common.dbFile, true, true, "/"));
 
   const mqttClient = await connectAsync(
@@ -69,7 +71,7 @@ async function main() {
         );
       }
     } catch (err) {
-      console.error(err.message);
+      logError(SCRIPTNAME, err);
     }
   });
 

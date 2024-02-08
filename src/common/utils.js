@@ -4,6 +4,21 @@ function round(num) {
   return Math.round(num * 100) / 100;
 }
 
+export function logError(scriptname, err) {
+  let errMessage = `[${scriptname}] `;
+  if (err.name) {
+    errMessage += `${err.name}: `;
+  }
+  
+  if (err.message) {
+    errMessage += `${err.message}`
+  } else {
+    errMessage += `${JSON.stringify(err)}`
+  }
+
+  console.error(errMessage);
+}
+
 export async function loadConfig(name) {
   const configFile = `../../config/${ENV}/${name}.js`;
   //console.error(`loading configuration ${configFile}...`);

@@ -1,9 +1,11 @@
 import { CronJob } from "cron";
 import { netatmoApiClient } from "./netatmo-api.js";
-import { loadConfig, lineProtocol } from "../common/utils.js";
+import { loadConfig, lineProtocol, logError } from "../common/utils.js";
+
+const SCRIPTNAME = "netatmo";
 
 async function main() {
-  const config = await loadConfig("netatmo");
+  const config = await loadConfig(SCRIPTNAME);
   const client = netatmoApiClient(config);
 
   // start cronjob
@@ -25,7 +27,7 @@ async function main() {
       processModule(mainDevice);
       mainDevice.modules.forEach(processModule);
     } catch (err) {
-      console.error(err);
+      logError(SCRIPTNAME, err);
     }
   }
 

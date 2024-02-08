@@ -1,8 +1,10 @@
 import { openWebSocket } from "./ws-controller.js";
-import { loadConfig, lineProtocol } from "../common/utils.js";
+import { loadConfig, lineProtocol, logError } from "../common/utils.js";
+
+const SCRIPTNAME = "opendtu";
 
 async function main() {
-  const config = await loadConfig("opendtu");
+  const config = await loadConfig(SCRIPTNAME);
 
   openWebSocket(config.ws.url, (message) => {
     try {
@@ -54,7 +56,7 @@ async function main() {
         }
       });
     } catch (err) {
-      console.error(`error processing message: ${err.message}`);
+      logError(SCRIPTNAME, err);
     }
   });
 

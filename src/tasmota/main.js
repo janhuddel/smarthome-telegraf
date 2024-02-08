@@ -1,9 +1,11 @@
 import axios from "axios";
 import { connectAsync } from "mqtt";
-import { loadConfig, lineProtocol } from "../common/utils.js";
+import { loadConfig, lineProtocol, logError } from "../common/utils.js";
+
+const SCRIPTNAME = "tasmota";
 
 async function main() {
-  const config = await loadConfig("tasmota");
+  const config = await loadConfig(SCRIPTNAME);
 
   const mqttClient = await connectAsync(
     `mqtt://${config.mqtt.broker}`,
@@ -22,7 +24,7 @@ async function main() {
       try {
         await processSensorData(device, sensorData);
       } catch (err) {
-        console.error(err);
+        logError(SCRIPTNAME, err);
       }
     }
   });
