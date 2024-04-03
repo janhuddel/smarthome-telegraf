@@ -33,6 +33,21 @@ export const config = {
       channels: ["Schreibtisch"],
     },
     {
+      id: "tasmota_BE7440",
+      ip: "172.19.10.5",
+      channels: ["Büro#1"],
+    },
+    {
+      id: "tasmota_92E8B4",
+      ip: "172.19.10.6",
+      channels: ["Büro#2"],
+    },
+    {
+      id: "tasmota_BE97A0",
+      ip: "172.19.10.7",
+      channels: ["Büro#3"],
+    },
+    {
       id: "tasmota_6886BC",
       ip: "172.19.20.1",
       channels: ["Filteranlage", "Wärmepumpe"],
