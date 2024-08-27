@@ -30,56 +30,96 @@ async function main() {
   });
 
   async function processSensorData(device, sensorData) {
-    const power = sensorData.ENERGY.Power;
-    const time = new Date(sensorData.Time);
+    if (sensorData.MT175) {
+      // SmartMeter (Hichi, IR Lesekopf)
+      return processSmartMeter(device, sensorData);
+    }
 
-    if (!Array.isArray(power)) {
-      // Single-Channel
+    if (Array.isArray(sensorData.ENERGY.Power)) {
+      // SONOFF DUAL R3 (2 Kanäle)
+      return processMultiChannel(device, sensorData);
+    }
+
+    // normaler Zwischenstecker mit einem Kanal
+    return processSingleChannel(device, sensorData);
+  }
+
+  async function processSmartMeter(device, sensorData) {
+    const time = new Date(sensorData.Time);
+    const power = sensorData.MT175.P;
+
+    console.log(
+      lineProtocol(
+        config.common.measurement,
+        {
+          vendor: config.common.vendor,
+          device: device.id,
+          friendly: device.channels[0],
+        },
+        {
+          power,
+          power_l1: sensorData.MT175.L1,
+          power_l2: sensorData.MT175.L2,
+          power_l3: sensorData.MT175.L3,
+          sum_power_total: sensorData.MT175.E_in * 1000.0,
+          sum_power_total_out: sensorData.MT175.E_out * 1000.0,
+        },
+        time
+      )
+    );
+  }
+
+  async function processSingleChannel(device, sensorData) {
+    const time = new Date(sensorData.Time);
+    const power = sensorData.ENERGY.Power;
+
+    console.log(
+      lineProtocol(
+        config.common.measurement,
+        {
+          vendor: config.common.vendor,
+          device: device.id,
+          friendly: device.channels[0],
+        },
+        {
+          power,
+          voltage: sensorData.ENERGY.Voltage,
+          current: sensorData.ENERGY.Current * 1000.0,
+          sum_power_today: sensorData.ENERGY.Today * 1000.0,
+          sum_power_total: sensorData.ENERGY.Total * 1000.0,
+        },
+        time
+      )
+    );
+  }
+
+  async function processMultiChannel(device, sensorData) {
+    const time = new Date(sensorData.Time);
+    const power = sensorData.ENERGY.Power;
+
+    // Multi-Channel (die Totals müssen per Http nachgelesen werden, da sie nicht in den Sensordaten enthalten sind)
+    const response = await axios.get(`http://${device.ip}/cm?cmnd=EnergyTotal`);
+    const energyTotals = response.data.EnergyTotal;
+
+    for (const [i, channel] of device.channels.entries()) {
       console.log(
         lineProtocol(
           config.common.measurement,
           {
             vendor: config.common.vendor,
-            device: device.id,
-            friendly: device.channels[0],
+            device: `${device.id}.${i}`,
+            friendly: channel,
           },
           {
-            power,
+            power: power[i],
             voltage: sensorData.ENERGY.Voltage,
-            current: sensorData.ENERGY.Current * 1000.0,
-            sum_power_today: sensorData.ENERGY.Today * 1000.0,
-            sum_power_total: sensorData.ENERGY.Total * 1000.0,
+            current: sensorData.ENERGY.Current[i] * 1000.0,
+            sum_power_today: energyTotals.Today[i] * 1000.0,
+            sum_power_total: energyTotals.Total[i] * 1000.0,
           },
           time
         )
       );
-    } else {
-      // Multi-Channel (die Totals müssen per Http nachgelesen werden, da sie nicht in den Sensordaten enthalten sind)
-      const response = await axios.get(
-        `http://${device.ip}/cm?cmnd=EnergyTotal`
-      );
-      const energyTotals = response.data.EnergyTotal;
-
-      for (const [i, channel] of device.channels.entries()) {
-        console.log(
-          lineProtocol(
-            config.common.measurement,
-            {
-              vendor: config.common.vendor,
-              device: `${device.id}.${i}`,
-              friendly: channel,
-            },
-            {
-              power: power[i],
-              voltage: sensorData.ENERGY.Voltage,
-              current: sensorData.ENERGY.Current[i] * 1000.0,
-              sum_power_today: energyTotals.Today[i] * 1000.0,
-              sum_power_total: energyTotals.Total[i] * 1000.0,
-            },
-            time
-          )
-        );
-      }
     }
   }
 }

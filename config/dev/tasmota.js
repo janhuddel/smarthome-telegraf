@@ -13,34 +13,9 @@ export const config = {
   },
   devices: [
     {
-      id: "tasmota_17E7AE",
-      ip: "172.19.10.1",
-      channels: ["Geschirrspüler"],
-    },
-    {
-      id: "tasmota_186EBD",
-      ip: "172.19.10.2",
-      channels: ["Kühlschrank"],
-    },
-    {
-      id: "tasmota_180E0E",
-      ip: "172.19.10.3",
-      channels: ["Wäschetrockner"],
-    },
-    {
-      id: "tasmota_17BD5F",
-      ip: "172.19.10.4",
-      channels: ["Schreibtisch"],
-    },
-    {
-      id: "tasmota_6886BC",
-      ip: "172.19.20.1",
-      channels: ["Filteranlage", "Wärmepumpe"],
-    },
-    {
-      id: "tasmota_1CFCDC",
-      ip: "172.19.20.2",
-      channels: ["Balkonkraftwerk"],
+      id: "tasmota_8D7748",
+      ip: "172.19.10.200",
+      channels: ["SmartMeter"],
     },
   ],
 };

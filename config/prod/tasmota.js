@@ -57,5 +57,10 @@ export const config = {
       ip: "172.19.20.2",
       channels: ["Wechselrichter"],
     },
+    {
+      id: "tasmota_8D7748",
+      ip: "172.19.10.200",
+      channels: ["SmartMeter"],
+    },
   ],
 };
