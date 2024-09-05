@@ -46,7 +46,7 @@ async function main() {
 
   async function processSmartMeter(device, sensorData) {
     const time = new Date(sensorData.Time);
-    const power = sensorData.MT175.P;
+    const power = sensorData.MT175.Power;
 
     console.log(
       lineProtocol(
@@ -58,9 +58,10 @@ async function main() {
         },
         {
           power,
-          power_l1: sensorData.MT175.L1,
-          power_l2: sensorData.MT175.L2,
-          power_l3: sensorData.MT175.L3,
+          // derzeit erhalte ich keine Werte für L1-L3
+          //power_l1: sensorData.MT175.L1,
+          //power_l2: sensorData.MT175.L2,
+          //power_l3: sensorData.MT175.L3,
           sum_power_total: sensorData.MT175.E_in * 1000.0,
           sum_power_total_out: sensorData.MT175.E_out * 1000.0,
         },
