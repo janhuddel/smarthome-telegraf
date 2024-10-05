@@ -30,7 +30,7 @@ export const config = {
     {
       id: "tasmota_17BD5F",
       ip: "172.19.10.4",
-      channels: ["Schreibtisch"],
+      channels: ["Heizung"],
     },
     {
       id: "tasmota_BE7440",
