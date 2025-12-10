@@ -16,6 +16,14 @@ export function logError(scriptname, err) {
     errMessage += `${JSON.stringify(err)}`
   }
 
+  // Add response details for axios errors
+  if (err.response) {
+    errMessage += `\n  Status: ${err.response.status}`;
+    if (err.response.data) {
+      errMessage += `\n  Response: ${JSON.stringify(err.response.data)}`;
+    }
+  }
+
   console.error(errMessage);
 }
 

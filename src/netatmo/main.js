@@ -8,6 +8,20 @@ async function main() {
   const config = await loadConfig(SCRIPTNAME);
   const client = netatmoApiClient(config);
 
+  async function collectMetrics() {
+    try {
+      const data = await client.getStationsData();
+      
+      const mainDevice = data.body.devices[0];
+      processModule(mainDevice);
+      if (mainDevice.modules) {
+        mainDevice.modules.forEach(processModule);
+      }
+    } catch (err) {
+      logError(SCRIPTNAME, err);
+    }
+  }
+
   // start cronjob
   new CronJob(
     config.common.cron,
@@ -16,23 +30,12 @@ async function main() {
     true, // auto-start
     "Europe/Berlin", // timezone
     null, // context
-    true // runOnOnit
+    true // runOnInit
   );
-
-  async function collectMetrics() {
-    try {
-      const data = await client.getStationsData();
-      
-      const mainDevice = data.body.devices[0];
-      processModule(mainDevice);
-      mainDevice.modules.forEach(processModule);
-    } catch (err) {
-      logError(SCRIPTNAME, err);
-    }
-  }
 
   async function processModule(module) {
     const device = config.devices.find((d) => d.id === module._id);
+    
     if (device && module.dashboard_data) {
       const timestamp = module.dashboard_data.time_utc * 1000000000;
 
@@ -69,4 +72,6 @@ async function main() {
   }
 }
 
-main();
+main().catch((err) => {
+  logError(SCRIPTNAME, err);
+});
