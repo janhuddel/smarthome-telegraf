@@ -12,47 +12,62 @@ async function main() {
       const timestamp = new Date();
       payload.inverters.forEach((inverter) => {
         // inverter
-        console.log(
-          lineProtocol(
-            config.common.measurement,
-            {
-              vendor: config.common.vendor,
-              friendly: inverter.name,
-              device: inverter.serial,
-            },
-            {
-              power: inverter.AC["0"].Power.v,
-              voltage: inverter.AC["0"].Voltage.v,
-              current: getCurrentInmA(inverter.AC["0"].Current),
-              sum_power_total: getPowerInWh(inverter.AC["0"].YieldTotal),
-              sum_power_today: getPowerInWh(inverter.AC["0"].YieldDay),
-            },
-            timestamp
-          )
-        );
+        const ac0 = inverter.AC?.["0"];
+        if (!ac0) {
+          logError(SCRIPTNAME, new Error(`AC["0"] not found for inverter ${inverter.serial}`));
+          return;
+        }
 
-        // panels
-        for (const [key, dc] of Object.entries(inverter.DC)) {
-          const device = `${inverter.serial}.${Number(key) + 1}`;
-          const friendly = `Panel#${Number(key) + 1}`;
+        const fields = {};
+        if (ac0.Power?.v !== undefined) fields.power = ac0.Power.v;
+        if (ac0.Voltage?.v !== undefined) fields.voltage = ac0.Voltage.v;
+        if (ac0.Current) fields.current = getCurrentInmA(ac0.Current);
+        if (ac0.YieldTotal) fields.sum_power_total = getPowerInWh(ac0.YieldTotal);
+        if (ac0.YieldDay) fields.sum_power_today = getPowerInWh(ac0.YieldDay);
+
+        if (Object.keys(fields).length > 0) {
           console.log(
             lineProtocol(
               config.common.measurement,
               {
                 vendor: config.common.vendor,
-                friendly,
-                device,
+                friendly: inverter.name,
+                device: inverter.serial,
               },
-              {
-                power: dc.Power.v,
-                voltage: dc.Voltage.v,
-                current: getCurrentInmA(dc.Current),
-                sum_power_total: getPowerInWh(dc.YieldTotal),
-                sum_power_today: getPowerInWh(dc.YieldDay),
-              },
+              fields,
               timestamp
             )
           );
+        }
+
+        // panels
+        if (inverter.DC) {
+          for (const [key, dc] of Object.entries(inverter.DC)) {
+            const device = `${inverter.serial}.${Number(key) + 1}`;
+            const friendly = `Panel#${Number(key) + 1}`;
+            
+            const dcFields = {};
+            if (dc.Power?.v !== undefined) dcFields.power = dc.Power.v;
+            if (dc.Voltage?.v !== undefined) dcFields.voltage = dc.Voltage.v;
+            if (dc.Current) dcFields.current = getCurrentInmA(dc.Current);
+            if (dc.YieldTotal) dcFields.sum_power_total = getPowerInWh(dc.YieldTotal);
+            if (dc.YieldDay) dcFields.sum_power_today = getPowerInWh(dc.YieldDay);
+
+            if (Object.keys(dcFields).length > 0) {
+              console.log(
+                lineProtocol(
+                  config.common.measurement,
+                  {
+                    vendor: config.common.vendor,
+                    friendly,
+                    device,
+                  },
+                  dcFields,
+                  timestamp
+                )
+              );
+            }
+          }
         }
       });
     } catch (err) {
@@ -61,6 +76,9 @@ async function main() {
   });
 
   function getPowerInWh(obj) {
+    if (!obj || obj.v === undefined) {
+      return undefined;
+    }
     if (obj.u === "kWh") {
       return obj.v * 1000.0;
     } else {
@@ -69,6 +87,9 @@ async function main() {
   }
 
   function getCurrentInmA(obj) {
+    if (!obj || obj.v === undefined) {
+      return undefined;
+    }
     if (obj.u === "A") {
       return obj.v * 1000.0;
     } else {
