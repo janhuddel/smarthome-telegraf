@@ -18,12 +18,13 @@ async function main() {
           return;
         }
 
+        const inv = inverter.INV?.["0"];
         const fields = {};
         if (ac0.Power?.v !== undefined) fields.power = ac0.Power.v;
         if (ac0.Voltage?.v !== undefined) fields.voltage = ac0.Voltage.v;
         if (ac0.Current) fields.current = getCurrentInmA(ac0.Current);
-        if (ac0.YieldTotal) fields.sum_power_total = getPowerInWh(ac0.YieldTotal);
-        if (ac0.YieldDay) fields.sum_power_today = getPowerInWh(ac0.YieldDay);
+        if (inv?.YieldTotal) fields.sum_power_total = getPowerInWh(inv.YieldTotal);
+        if (inv?.YieldDay) fields.sum_power_today = getPowerInWh(inv.YieldDay);
 
         if (Object.keys(fields).length > 0) {
           console.log(
