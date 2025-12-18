@@ -1,6 +1,6 @@
 export const config = {
   mqtt: {
-    broker: "mqtt",
+    broker: "172.22.2.40",
     topicPrefix: "hm/status",
     connectOptions: {
       clientId: `homematic-electricity-telegraf-${new Date().getTime()}`,

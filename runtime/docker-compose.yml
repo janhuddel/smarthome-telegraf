@@ -1,17 +1,6 @@
 version: "3"
 
 services:
-  mqtt:
-    container_name: mqtt
-    image: eclipse-mosquitto:2
-    restart: unless-stopped
-    ports:
-      - 1883:1883
-    volumes:
-      - ./mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
-      - mqtt.data:/mosquitto/data/
-      - mqtt.log:/mosquitto/log/
-
   telegraf:
     container_name: telegraf
     build: ..
@@ -26,13 +15,7 @@ services:
       - INFLUXDB_ORG=home
       - INFLUXDB_BUCKET=smarthome
       - ENV=prod
-    depends_on:
-      - mqtt
     volumes:
       - ./telegraf.conf:/etc/telegraf.conf:ro
       - ../data/jsondb:/var/lib/jsondb
       - ../config:/opt/smarthome-telegraf/config:ro
-
-volumes:
-  mqtt.data:
-  mqtt.log:
