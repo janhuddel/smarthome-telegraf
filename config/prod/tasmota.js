@@ -13,54 +13,54 @@ export const config = {
   },
   devices: [
     {
-      id: "tasmota_17E7AE",
+      id: "tasmota_FD1DE4",
       ip: "172.19.10.1",
+      channels: ["SmartMeter"],
+    },
+    {
+      id: "tasmota_17BD5F",
+      ip: "172.19.10.2",
+      channels: ["Heizung"],
+    },
+    {
+      id: "tasmota_17E7AE",
+      ip: "172.19.13.2",
       channels: ["Geschirrspüler"],
     },
     {
       id: "tasmota_186EBD",
-      ip: "172.19.10.2",
+      ip: "172.19.13.3",
       channels: ["Kühlschrank"],
     },
     {
-      id: "tasmota_180E0E",
-      ip: "172.19.10.3",
-      channels: ["Wäschetrockner"],
-    },
-    {
-      id: "tasmota_17BD5F",
-      ip: "172.19.10.4",
-      channels: ["Heizung"],
-    },
-    {
       id: "tasmota_BE7440",
-      ip: "172.19.10.5",
+      ip: "172.19.21.2",
       channels: ["Büro#1"],
     },
     {
       id: "tasmota_92E8B4",
-      ip: "172.19.10.6",
+      ip: "172.19.21.3",
       channels: ["Büro#2"],
     },
     {
       id: "tasmota_BE97A0",
-      ip: "172.19.10.7",
+      ip: "172.19.21.4",
       channels: ["Büro#3"],
     },
     {
       id: "tasmota_6886BC",
-      ip: "172.19.20.1",
+      ip: "172.19.100.1",
       channels: ["Filteranlage", "Wärmepumpe"],
     },
     {
       id: "tasmota_1CFCDC",
-      ip: "172.19.20.2",
+      ip: "172.19.100.2",
       channels: ["Wechselrichter"],
     },
     {
-      id: "tasmota_FD1DE4",
-      ip: "172.19.10.201",
-      channels: ["SmartMeter"],
+      id: "tasmota_180E0E",
+      ip: "172.19.101.2",
+      channels: ["Wäschetrockner"],
     },
   ],
 };
