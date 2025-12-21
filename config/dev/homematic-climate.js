@@ -1,6 +1,6 @@
 export const config = {
   mqtt: {
-    broker: "172.16.1.12",
+    broker: "172.22.2.40",
     topicPrefix: "hm/status",
     connectOptions: {
       clientId: `homematic-climate-telegraf-${new Date().getTime()}`,

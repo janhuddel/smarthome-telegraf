@@ -1,6 +1,6 @@
 export const config = {
   ws: {
-    url: "ws://opendtu.intra.rohwer.sh/livedata",
+    url: "ws://opendtu.rohwer.sh/livedata",
   },
   common: {
     vendor: "hoymiles",
