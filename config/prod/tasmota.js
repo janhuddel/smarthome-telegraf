@@ -1,6 +1,6 @@
 export const config = {
   mqtt: {
-    broker: "172.22.2.40",
+    broker: "mqtt-prod.rohwer.sh",
     connectOptions: {
       clientId: `tasmota-telegraf-${new Date().getTime()}`,
       connectTimeout: 10 * 1000,
@@ -34,32 +34,32 @@ export const config = {
     },
     {
       id: "tasmota_BE7440",
-      ip: "172.19.21.2",
+      ip: "172.19.21.1",
       channels: ["Büro#1"],
     },
     {
       id: "tasmota_92E8B4",
-      ip: "172.19.21.3",
+      ip: "172.19.21.2",
       channels: ["Büro#2"],
     },
     {
       id: "tasmota_BE97A0",
-      ip: "172.19.21.4",
+      ip: "172.19.21.3",
       channels: ["Büro#3"],
     },
     {
       id: "tasmota_6886BC",
-      ip: "172.19.100.1",
+      ip: "172.19.51.1",
       channels: ["Filteranlage", "Wärmepumpe"],
     },
     {
       id: "tasmota_1CFCDC",
-      ip: "172.19.100.2",
+      ip: "172.19.51.2",
       channels: ["Wechselrichter"],
     },
     {
       id: "tasmota_180E0E",
-      ip: "172.19.101.2",
+      ip: "172.19.50.2",
       channels: ["Wäschetrockner"],
     },
   ],
